@@ -1,31 +1,37 @@
 package com.github.aptemkov.cleanarchitectureexample.data.repository
 
-import android.content.Context
+import com.github.aptemkov.cleanarchitectureexample.data.storage.UserStorage
+import com.github.aptemkov.cleanarchitectureexample.data.storage.sharedprefs.User
 import com.github.aptemkov.cleanarchitectureexample.domain.models.SaveUserNameParameter
 import com.github.aptemkov.cleanarchitectureexample.domain.models.UserName
 import com.github.aptemkov.cleanarchitectureexample.domain.repository.UserRepository
 
-private const val SHARED_PREFS_NAME = "shared_prefs_name"
-private const val KEY_FIRST_NAME = "firstName"
-private const val KEY_LAST_NAME = "lastName "
-private const val DEFAULT_FIST_NAME = "firstName "
-private const val DEFAULT_LAST_NAME = "lastName "
 
-class UserRepositoryImpl(context: Context): UserRepository {
+class UserRepositoryImpl(private val userStorage: UserStorage): UserRepository {
 
-    private val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
 
     override fun saveUserName(saveParam: SaveUserNameParameter): Boolean {
-        sharedPreferences.edit().putString(KEY_FIRST_NAME, saveParam.firstName ).apply()
-        return true
+
+        val user = mapToStorage(saveParam)
+
+        val result = userStorage.save(user)
+        return result
     }
 
     override fun getUserName(): UserName {
-        val firstName = sharedPreferences.getString(KEY_FIRST_NAME, "empty") ?: DEFAULT_FIST_NAME
-        val lastName = sharedPreferences.getString(KEY_LAST_NAME, "empty ") ?: DEFAULT_LAST_NAME
+        val user = userStorage.get()
 
-        return UserName(firstName = firstName, lastName = lastName)
+        val userName = mapToDomain(user)
+
+        return userName
     }
 
+    private fun mapToStorage(saveParam: SaveUserNameParameter): User {
+        return User (firstName = saveParam.firstName, lastName = "")
+    }
+
+    private fun mapToDomain(user: User): UserName {
+        return UserName(firstName = user.firstName, lastName = user.lastName)
+    }
 
 }
