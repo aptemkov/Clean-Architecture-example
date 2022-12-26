@@ -1,4 +1,4 @@
-package com.github.aptemkov.cleanarchitectureexample
+package com.github.aptemkov.cleanarchitectureexample.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
