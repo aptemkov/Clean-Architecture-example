@@ -9,12 +9,11 @@ class SaveUsernameUseCase(private val repository: UserRepository) {
 
         val oldUserName = repository.getUserName()
         var newParam = param
-        if(param.firstName == oldUserName.firstName) {
+        if (param.firstName == oldUserName.firstName) {
             newParam = SaveUserNameParameter(param.firstName + "*")
         }
 
-        val result = repository.saveUserName(saveParam = newParam)
-        return result
+        return repository.saveUserName(saveParam = newParam)
     }
 
 }
