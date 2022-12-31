@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.github.aptemkov.cleanarchitectureexample.domain.models.SaveUserNameParameter
 import com.github.aptemkov.cleanarchitectureexample.domain.usecase.GetUsernameUseCase
 import com.github.aptemkov.cleanarchitectureexample.domain.usecase.SaveUsernameUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 
 /**
@@ -13,7 +15,8 @@ import com.github.aptemkov.cleanarchitectureexample.domain.usecase.SaveUsernameU
  * *MVVM is not an architecture, but pattern
  ***/
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val getUsernameUseCase: GetUsernameUseCase,
     private val saveUsernameUseCase: SaveUsernameUseCase
 ) : ViewModel() {
