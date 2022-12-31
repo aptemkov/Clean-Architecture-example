@@ -1,4 +1,4 @@
-package com.github.aptemkov.cleanarchitectureexample.presentation
+package com.github.aptemkov.cleanarchitectureexample.presentation.presentation
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -9,16 +9,10 @@ import com.github.aptemkov.cleanarchitectureexample.domain.usecase.GetUsernameUs
 import com.github.aptemkov.cleanarchitectureexample.domain.usecase.SaveUsernameUseCase
 
 
-class MainViewModelFactory(context: Context): ViewModelProvider.Factory {
-
-    private val userRepository by lazy {
-        UserRepositoryImpl(
-            userStorage = SharedPrefUserStorage(context = context)
-        )
-    }
-    private val getUsernameUseCase by lazy { GetUsernameUseCase(userRepository) }
-    private val saveUsernameUseCase by lazy { SaveUsernameUseCase(userRepository) }
-
+class MainViewModelFactory(
+    val getUsernameUseCase: GetUsernameUseCase,
+    val saveUsernameUseCase: SaveUsernameUseCase,
+): ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return MainViewModel(

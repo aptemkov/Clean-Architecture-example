@@ -1,15 +1,21 @@
-package com.github.aptemkov.cleanarchitectureexample.presentation
+package com.github.aptemkov.cleanarchitectureexample.presentation.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.github.aptemkov.cleanarchitectureexample.databinding.ActivityMainBinding
+import com.github.aptemkov.cleanarchitectureexample.presentation.app.App
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var viewModelFactory: MainViewModelFactory
+
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +23,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, MainViewModelFactory(this))
+        (applicationContext as App).appComponent.inject(this)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainViewModel::class.java)
 
         initViews()

@@ -1,4 +1,4 @@
-package com.github.aptemkov.cleanarchitectureexample.presentation
+package com.github.aptemkov.cleanarchitectureexample.presentation.presentation
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
