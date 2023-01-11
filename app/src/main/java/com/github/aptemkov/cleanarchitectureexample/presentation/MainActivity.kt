@@ -1,41 +1,43 @@
 package com.github.aptemkov.cleanarchitectureexample.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.github.aptemkov.cleanarchitectureexample.data.repository.UserRepositoryImpl
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.github.aptemkov.cleanarchitectureexample.databinding.ActivityMainBinding
-import com.github.aptemkov.cleanarchitectureexample.domain.models.SaveUserNameParameter
-import com.github.aptemkov.cleanarchitectureexample.domain.usecase.GetUsernameUseCase
-import com.github.aptemkov.cleanarchitectureexample.domain.usecase.SaveUsernameUseCase
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    private val userRepository by lazy { UserRepositoryImpl(context = applicationContext) }
-
-    private val getUsernameUseCase by lazy { GetUsernameUseCase(userRepository) }
-    private val saveUsernameUseCase by lazy { SaveUsernameUseCase(userRepository ) }
-
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        initViews()
+
+        viewModel.resultUserNameLive.observe(this) {
+            binding.dataTextView.text = it
+        }
+
+        viewModel.resultStatus.observe(this) {
+            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun initViews() {
         binding.sendButton.setOnClickListener {
             val text = binding.dataEditText.text.toString()
-            val param = SaveUserNameParameter(firstName = text)
-            val result = saveUsernameUseCase.execute(param = param)
-            Snackbar.make(it, "$result", Snackbar.LENGTH_SHORT).show()
+            viewModel.save(text)
         }
 
         binding.receiveButton.setOnClickListener {
-            val userName = getUsernameUseCase.execute()
-            binding.dataTextView.text = "${userName.firstName} ${userName.lastName}"
+            viewModel.load()
         }
-
     }
 }
