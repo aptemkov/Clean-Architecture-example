@@ -20,12 +20,8 @@ class MainActivity : AppCompatActivity() {
 
         initViews()
 
-        viewModel.resultUserNameLive.observe(this) {
-            binding.dataTextView.text = it
-        }
-
-        viewModel.resultStatus.observe(this) {
-            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+        viewModel.stateLive.observe(this) { state ->
+            binding.dataTextView.text = "${state.firstName} ${state.lastName} ${state.saveResult}"
         }
 
     }
@@ -33,11 +29,11 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         binding.sendButton.setOnClickListener {
             val text = binding.dataEditText.text.toString()
-            viewModel.save(text)
+            viewModel.send(SaveEvent(text = text))
         }
 
         binding.receiveButton.setOnClickListener {
-            viewModel.load()
+            viewModel.send(LoadEvent())
         }
     }
 }

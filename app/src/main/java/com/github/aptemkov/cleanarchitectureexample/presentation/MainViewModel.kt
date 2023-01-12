@@ -21,23 +21,47 @@ class MainViewModel @Inject constructor(
     private val saveUsernameUseCase: SaveUsernameUseCase
 ) : ViewModel() {
 
-    private val _resultUserNameLive = MutableLiveData<String>()
-    val resultUserNameLive = _resultUserNameLive
+    private val _stateLiveMutable = MutableLiveData<MainState>()
+    val stateLive = _stateLiveMutable
 
-    private  val _resultStatus = MutableLiveData<String>()
-    val resultStatus = _resultStatus
+    init {
+        _stateLiveMutable.value = MainState(
+            saveResult = false,
+            firstName = "",
+            lastName = "",
+        )
+    }
 
-    fun save(text: String) {
+    fun send(event: MainEvent) {
+        when(event) {
+            is SaveEvent -> {
+                save(text = event.text)
+            }
+            is LoadEvent -> {
+                load()
+            }
+        }
+
+    }
+
+    private fun save(text: String) {
         val param = SaveUserNameParameter(
             firstName = text)
         val resultData = saveUsernameUseCase.execute(param = param)
-        _resultStatus.value =  "Result = $resultData"
+        _stateLiveMutable.value = MainState(
+            saveResult = resultData,
+            firstName = _stateLiveMutable.value!!.firstName,
+            lastName = _stateLiveMutable.value!!.lastName,
+        )
     }
 
-    fun load () {
+    private fun load () {
         val userName = getUsernameUseCase.execute()
-        _resultUserNameLive.value = "Name: ${userName.firstName}\n" +
-                "Lastname: ${userName.lastName}"
+        _stateLiveMutable.value = MainState(
+            saveResult = _stateLiveMutable.value!!.saveResult,
+            firstName = userName.firstName,
+            lastName = userName.lastName,
+        )
     }
 
 
